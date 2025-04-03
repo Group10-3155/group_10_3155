@@ -1,4 +1,5 @@
 import { Box, ButtonGroup, Button } from "@mui/material";
+import { Link } from "react-router";
 
 export default function Header() {
   return (
@@ -11,11 +12,19 @@ export default function Header() {
       }}
     >
       <ButtonGroup variant="contained" aria-label="Basic button group">
-        <Button active>Map</Button>
-        <Button>Trending Spots</Button>
-        <Button>Notifications</Button>
+        <Link to="/">
+          <Button>Map</Button>
+        </Link>
+        <Link to="/">
+          <Button>Trending</Button>
+        </Link>
+        <Link to="/notifications">
+          <Button>Notifications</Button>
+        </Link>
       </ButtonGroup>
-      <Button variant="contained">Login</Button>
+      <Link to="/login">
+        <Button variant="contained">Login</Button>
+      </Link>
     </Box>
   );
 }
