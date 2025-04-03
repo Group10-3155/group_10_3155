@@ -1,17 +1,18 @@
-import { Box } from "@mui/material";
-import Header from "./components/Header.jsx";
-import Sidebar from "./components/Sidebar.jsx";
-import MapComponent from './components/MapComponent.jsx';
+// import BrowsePage from "./pages/BrowsePage.jsx";
+// import ErrorPage from "./pages/ErrorPage.jsx";
+// import EventPage from "./pages/EventPage.jsx";
+import Home from "./pages/Home.jsx";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
+// React Router
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Home />,
+    // errorElement: <ErrorPage />,
+  },
+]);
+
 export default function App() {
-  return (
-    <Box sx={{ display: "flex", height: "100vh" }}>
-      <Sidebar />
-      <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
-        <Header />
-        <Box sx={{ flexGrow: 1 }}>
-          <MapComponent />
-        </Box>
-      </Box>
-    </Box>
-  );
+  return <RouterProvider router={router} />;
 }
