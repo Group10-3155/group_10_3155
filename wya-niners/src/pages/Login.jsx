@@ -1,4 +1,12 @@
-import { Box, Button, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { Link } from "react-router-dom";
 
 export default function Login() {
@@ -12,12 +20,34 @@ export default function Login() {
         minHeight: "100vh",
       }}
     >
-      <Typography variant="h1" sx={{ mb: 2 }}>
-        Login Placeholder
-      </Typography>
-      <Link to="/">
-        <Button variant="contained">Return</Button>
-      </Link>
+      <Card sx={{ width: 350, p: 2 }}>
+        <CardContent>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+            }}
+          >
+            <Typography variant="h4">Login</Typography>
+            <TextField
+              label="Email"
+              name="email"
+              type="email"
+              required
+              sx={{ pb: 1 }}
+            />
+            <TextField
+              label="Password"
+              name="password"
+              type="password"
+              required
+              sx={{ pb: 1 }}
+            />
+            <Button variant="contained">Login</Button>
+          </Box>
+        </CardContent>
+      </Card>
     </Box>
   );
 }
