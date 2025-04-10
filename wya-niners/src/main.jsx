@@ -22,6 +22,15 @@ const theme = createTheme({
       fontWeight: 600,
     },
   },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: "none", // Set default textTransform to 'none' for all buttons
+        },
+      },
+    },
+  },
 });
 
 createRoot(document.getElementById("root")).render(

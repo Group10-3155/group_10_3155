@@ -8,7 +8,6 @@ export default function Header() {
         display: "flex",
         justifyContent: "space-between",
         m: 2,
-        "& .MuiButton-root": { textTransform: "none" },
       }}
     >
       <ButtonGroup variant="contained" aria-label="Basic button group">

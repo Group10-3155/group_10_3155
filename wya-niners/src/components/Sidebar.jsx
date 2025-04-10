@@ -5,6 +5,7 @@ import {
   ListItemText,
   ListItemIcon,
   Typography,
+  useTheme,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import SearchIcon from "@mui/icons-material/Search";
@@ -26,6 +27,8 @@ const trendingButtonList = [
 ];
 
 export default function Sidebar() {
+  const theme = useTheme();
+
   return (
     <Drawer
       variant="permanent"
@@ -39,12 +42,20 @@ export default function Sidebar() {
         },
       }}
     >
-      <Typography
-        variant="h4"
-        sx={{ textAlign: "center", fontWeight: "bold", mb: 1, mt: 1 }}
-      >
-        WYANiners
-      </Typography>
+      <Link to="/" style={{ textDecoration: "none" }}>
+        <Typography
+          variant="h4"
+          sx={{
+            textAlign: "center",
+            fontWeight: "bold",
+            mb: 1,
+            mt: 1,
+            color: theme.palette.primary.main,
+          }}
+        >
+          WYANiners
+        </Typography>
+      </Link>
 
       <Typography sx={{ px: 2, pt: 2, fontWeight: "bold" }}>
         Discover
