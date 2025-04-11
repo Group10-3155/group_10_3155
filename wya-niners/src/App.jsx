@@ -5,6 +5,7 @@ import Home from "./pages/Home.jsx";
 import Notification from "./pages/Notification.jsx";
 import Login from "./pages/Login.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import CreateEvent from "./pages/CreateEvent.jsx";
 
 // React Router
 const router = createBrowserRouter([
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/create-event",
+    element: <CreateEvent />,
   },
 ]);
 
