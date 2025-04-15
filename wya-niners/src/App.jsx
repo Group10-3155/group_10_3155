@@ -4,8 +4,14 @@ import Event from "./pages/Event.jsx";
 import Home from "./pages/Home.jsx";
 import Notification from "./pages/Notification.jsx";
 import Login from "./pages/Login.jsx";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import ProtectedRoute from "./components/ProtectedRoutes.jsx";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 import CreateEvent from "./pages/CreateEvent.jsx";
+import Register from "./pages/Register.jsx";
 
 // React Router
 const router = createBrowserRouter([
@@ -35,10 +41,28 @@ const router = createBrowserRouter([
     element: <Login />,
   },
   {
+    path: "/register",
+    element: <RegisterAndLogout />,
+  },
+  {
     path: "/create-event",
-    element: <CreateEvent />,
+    element: (
+      <ProtectedRoute>
+        <CreateEvent />
+      </ProtectedRoute>
+    ),
   },
 ]);
+
+function Logout() {
+  localStorage.clear();
+  return <Navigate to="/login" />;
+}
+
+function RegisterAndLogout() {
+  localStorage.clear();
+  return <Register />;
+}
 
 export default function App() {
   return <RouterProvider router={router} />;

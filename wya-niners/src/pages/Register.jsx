@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 
-export default function Login() {
+export default function Register() {
   return (
     <Box
       sx={{
@@ -28,7 +28,7 @@ export default function Login() {
               gap: 2,
             }}
           >
-            <Typography variant="h4">Login</Typography>
+            <Typography variant="h4">Register</Typography>
             <TextField
               label="Email"
               name="email"
@@ -43,7 +43,7 @@ export default function Login() {
               required
               sx={{ pb: 1 }}
             />
-            <Button variant="contained">Login</Button>
+            <Button variant="contained">Register</Button>
           </Box>
         </CardContent>
       </Card>
