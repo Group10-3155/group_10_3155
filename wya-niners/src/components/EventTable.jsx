@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import api from "../api";
 import {
   Table,
   TableBody,
@@ -9,24 +11,41 @@ import {
   useTheme,
 } from "@mui/material";
 
-function createData(name, date, time, building, organization) {
-  return { name, date, time, building, organization };
-}
-
-// Placeholder data
-const rows = [
-  createData("Event 1", "01/01/25", "0:00PM", "Student Union", "UNCC"),
-  createData("Event 2", "01/01/25", "0:00PM", "Student Union", "UNCC"),
-  createData("Event 3", "01/01/25", "0:00PM", "Student Union", "UNCC"),
-  createData("Event 4", "01/01/25", "0:00PM", "Student Union", "UNCC"),
-  createData("Event 5", "01/01/25", "0:00PM", "Student Union", "UNCC"),
-  createData("Event 6", "01/01/25", "0:00PM", "Student Union", "UNCC"),
-  createData("Event 7", "01/01/25", "0:00PM", "Student Union", "UNCC"),
-  createData("Event 8", "01/01/25", "0:00PM", "Student Union", "UNCC"),
-];
-
 export default function EventTable() {
   const theme = useTheme();
+  const [rows, setRows] = useState([]);
+
+  useEffect(() => {
+    api
+      .get("/api/events/")
+      .then((response) => {
+        const formatted = response.data.map((event) => {
+          const start = new Date(`1970-01-01T${event.start_time}Z`);
+          const end = new Date(`1970-01-01T${event.end_time}Z`);
+
+          return {
+            name: event.title,
+            date: event.date,
+            time: `${start.toLocaleTimeString([], {
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: true,
+            })} - ${end.toLocaleTimeString([], {
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: true,
+            })}`,
+            building: event.location,
+            organization: event.host_organization,
+          };
+        });
+
+        setRows(formatted);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch events:", error);
+      });
+  }, []);
 
   return (
     <TableContainer component={Paper}>
@@ -85,18 +104,9 @@ export default function EventTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow
-              key={row.name}
-              sx={{
-                "&:last-child td, &:last-child th": {
-                  border: 0,
-                },
-              }}
-            >
-              <TableCell component="th" scope="row" sx={{ fontWeight: "bold" }}>
-                {row.name}
-              </TableCell>
+          {rows.map((row, index) => (
+            <TableRow key={index}>
+              <TableCell sx={{ fontWeight: "bold" }}>{row.name}</TableCell>
               <TableCell align="right">{row.date}</TableCell>
               <TableCell align="right">{row.time}</TableCell>
               <TableCell align="right">{row.building}</TableCell>
