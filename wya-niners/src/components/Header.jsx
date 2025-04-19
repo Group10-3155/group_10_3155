@@ -1,5 +1,6 @@
 import { Box, ButtonGroup, Button } from "@mui/material";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
+import AuthButton from "./AuthButton";
 
 export default function Header() {
   return (
@@ -21,9 +22,7 @@ export default function Header() {
           <Button>Notifications</Button>
         </Link>
       </ButtonGroup>
-      <Link to="/login">
-        <Button variant="contained">Login</Button>
-      </Link>
+      <AuthButton />
     </Box>
   );
 }
