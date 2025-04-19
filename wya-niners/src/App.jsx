@@ -11,7 +11,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import CreateEvent from "./pages/CreateEvent.jsx";
-import Register from "./pages/Register.jsx";
+import Signup from "./pages/Signup.jsx";
 
 // React Router
 const router = createBrowserRouter([
@@ -49,7 +49,7 @@ const router = createBrowserRouter([
     element: <Logout />,
   },
   {
-    path: "/register",
+    path: "/signup",
     element: <RegisterAndLogout />,
   },
   {
@@ -69,7 +69,7 @@ function Logout() {
 
 function RegisterAndLogout() {
   localStorage.clear();
-  return <Register />;
+  return <Signup />;
 }
 
 export default function App() {
