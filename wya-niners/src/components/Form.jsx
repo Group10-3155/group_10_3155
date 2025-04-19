@@ -18,7 +18,7 @@ export default function Form({ route, method }) {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const name = method === "login" ? "Login" : "Register";
+  const name = method === "login" ? "Login" : "Sign Up";
 
   const handleSubmit = async (e) => {
     setLoading(true);
@@ -107,7 +107,7 @@ export default function Form({ route, method }) {
               <Typography variant="subtitle1">
                 New to WYANiners?{" "}
                 <Link
-                  to="/register"
+                  to="/signup"
                   style={{ textDecoration: "none", color: "blue" }}
                 >
                   Sign Up
@@ -115,7 +115,7 @@ export default function Form({ route, method }) {
               </Typography>
             ) : (
               <Typography variant="subtitle1">
-                Already have an account?
+                Already have an account?{" "}
                 <Link
                   to="/login"
                   style={{ textDecoration: "none", color: "blue" }}

@@ -11,6 +11,7 @@ import { Link } from "react-router";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import SwapVertIcon from "@mui/icons-material/SwapVert";
+import AuthButton from "./AuthButton";
 
 export default function BrowseHeader() {
   return (
@@ -23,9 +24,7 @@ export default function BrowseHeader() {
         }}
       >
         <Typography variant="h1">Event Search</Typography>
-        <Link to="/login">
-          <Button variant="contained">Login</Button>
-        </Link>
+        <AuthButton />
       </Box>
       <Box sx={{ display: "flex", ml: 2, justifyContent: "space-between" }}>
         <TextField
