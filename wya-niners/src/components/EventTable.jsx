@@ -10,9 +10,11 @@ import {
   Paper,
   useTheme,
 } from "@mui/material";
+import { useNavigate } from "react-router";
 
 export default function EventTable({ searchQuery }) {
   const theme = useTheme();
+  const navigate = useNavigate();
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
@@ -30,6 +32,7 @@ export default function EventTable({ searchQuery }) {
           }/${dateObj.getDate()}/${dateObj.getFullYear().toString().slice(-2)}`;
 
           return {
+            id: event.id,
             name: event.title,
             date: formattedDate,
             time: `${start.toLocaleTimeString([], {
@@ -113,7 +116,12 @@ export default function EventTable({ searchQuery }) {
         </TableHead>
         <TableBody>
           {rows.map((row, index) => (
-            <TableRow key={index}>
+            <TableRow
+              key={index}
+              hover
+              sx={{ cursor: "pointer" }}
+              onClick={() => navigate(`/events/${row.id}`)}
+            >
               <TableCell sx={{ fontWeight: "bold" }}>{row.name}</TableCell>
               <TableCell align="right">{row.date}</TableCell>
               <TableCell align="right">{row.time}</TableCell>
