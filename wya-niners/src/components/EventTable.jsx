@@ -21,8 +21,8 @@ export default function EventTable({ searchQuery }) {
         const queryParam = searchQuery ? `?search=${searchQuery}` : "";
         const response = await api.get(`/api/search/${queryParam}`);
         const formatted = response.data.map((event) => {
-          const start = new Date(`1970-01-01T${event.start_time}Z`);
-          const end = new Date(`1970-01-01T${event.end_time}Z`);
+          const start = new Date(`1970-01-01T${event.start_time}`);
+          const end = new Date(`1970-01-01T${event.end_time}`);
           const dateObj = new Date(event.date);
 
           const formattedDate = `${

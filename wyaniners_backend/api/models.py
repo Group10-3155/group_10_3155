@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Event(models.Model):
+    event_photo = models.ImageField(upload_to="event-photos/", null=True, blank=True)
     title = models.CharField(max_length=100)
     host_organization = models.CharField(max_length=100)
     date = models.DateField()

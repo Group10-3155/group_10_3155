@@ -4,7 +4,7 @@ import {
   Button,
   TextField,
   MenuItem,
-  radioClasses,
+  CircularProgress,
 } from "@mui/material";
 import Sidebar from "../components/Sidebar.jsx";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
@@ -14,9 +14,10 @@ import {
   TimePicker,
 } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
 import { useState, useEffect } from "react";
 import buildingLocations from "../data/buildingLocations.json";
+import api from "../api.js";
+import { useNavigate } from "react-router";
 
 export default function CreateEvent() {
   const [eventName, setEventName] = useState("");
@@ -27,26 +28,48 @@ export default function CreateEvent() {
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
   const [eventPhoto, setEventPhoto] = useState(null);
+  const [eventPhotoName, setEventPhotoName] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {}, []);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setEventPhoto(file.name);
+      setEventPhoto(file);
+      setEventPhotoName(file.name);
     }
   };
 
-  // Log inputs for day and time for now
-  const handleClick = () => {
-    console.log("event pic:", eventPhoto);
-    console.log("event name:", eventName);
-    console.log("host:", host);
-    console.log("date:", date);
-    console.log("start time:", startTime);
-    console.log("end time:", endTime);
-    console.log("location:", location);
-    console.log("description:", description);
+  const handleSubmit = async (e) => {
+    setLoading(true);
+    e.preventDefault();
+
+    try {
+      const formData = new FormData();
+      formData.append("title", eventName);
+      formData.append("host_organization", host);
+      formData.append("date", date?.format("YYYY-MM-DD"));
+      formData.append("start_time", startTime?.format("HH:mm:ss"));
+      formData.append("end_time", endTime?.format("HH:mm:ss"));
+      formData.append("location", location);
+      formData.append("description", description);
+      if (eventPhoto) {
+        formData.append("event_photo", eventPhoto);
+      }
+
+      const res = await api.post("/api/events/", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      navigate("/browse");
+    } catch (error) {
+      alert(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -62,6 +85,8 @@ export default function CreateEvent() {
         }}
       >
         <Typography variant="h1">Create Event</Typography>
+
+        {loading && <CircularProgress />}
 
         <Box component="form" sx={{ width: "50%" }}>
           <Typography variant="h6">Event Photo</Typography>
@@ -95,7 +120,11 @@ export default function CreateEvent() {
             <Typography>Upload Photo</Typography>
           </Box>
           <Box sx={{ textAlign: "center" }}>
-            {eventPhoto && <Typography sx={{fontStyle: "italic"}}>Selected File: {eventPhoto}</Typography>}
+            {eventPhotoName && (
+              <Typography sx={{ fontStyle: "italic" }}>
+                Selected File: {eventPhotoName}
+              </Typography>
+            )}
           </Box>
 
           {/* Event Name */}
@@ -208,7 +237,7 @@ export default function CreateEvent() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           ></TextField>
-          <Button onClick={handleClick} variant="contained">
+          <Button onClick={handleSubmit} variant="contained">
             Create Event
           </Button>
         </Box>

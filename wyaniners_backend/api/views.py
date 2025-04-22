@@ -7,10 +7,16 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Event
 
 # View for all events
-class AllEventsView(generics.ListAPIView):
+class AllEventsView(generics.ListCreateAPIView):
 	queryset = Event.objects.all()
 	serializer_class = EventSerializer
 	permission_classes = [AllowAny]
+
+	def perform_create(self, serializer):
+		if serializer.is_valid():
+			serializer.save(author=self.request.user)
+		else:
+			print(serializer.errors)
 
 # View user events only
 class MyEventsView(generics.ListCreateAPIView):
