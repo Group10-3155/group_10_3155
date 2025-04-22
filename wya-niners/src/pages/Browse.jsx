@@ -2,15 +2,27 @@ import { Box } from "@mui/material";
 import Sidebar from "../components/Sidebar.jsx";
 import BrowseHeader from "../components/BrowseHeader.jsx";
 import EventTable from "../components/EventTable.jsx";
+import { useEffect, useState } from "react";
 
 export default function Browse() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+
+  const handleSearch = () => {
+    setSearchQuery(searchInput);
+  };
+
   return (
     <Box sx={{ display: "flex", height: "100vh" }}>
       <Sidebar />
       <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
-        <BrowseHeader />
+        <BrowseHeader
+          input={searchInput}
+          setInput={setSearchInput}
+          onSearchClick={handleSearch}
+        />
         <Box sx={{ flexGrow: 1, m: 2 }}>
-          <EventTable />
+          <EventTable searchQuery={searchQuery} />
         </Box>
       </Box>
     </Box>
