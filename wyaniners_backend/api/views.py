@@ -18,6 +18,12 @@ class AllEventsView(generics.ListCreateAPIView):
 		else:
 			print(serializer.errors)
 
+# View singular events
+class SingularEventView(generics.RetrieveAPIView):
+	queryset = Event.objects.all()
+	serializer_class = EventSerializer
+	permission_classes = [AllowAny]
+
 # View user events only
 class MyEventsView(generics.ListCreateAPIView):
 	serializer_class = EventSerializer
