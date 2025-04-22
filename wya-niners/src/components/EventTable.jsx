@@ -11,21 +11,27 @@ import {
   useTheme,
 } from "@mui/material";
 
-export default function EventTable() {
+export default function EventTable({ searchQuery }) {
   const theme = useTheme();
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
-    api
-      .get("/api/events/")
-      .then((response) => {
+    const fetchData = async () => {
+      try {
+        const queryParam = searchQuery ? `?search=${searchQuery}` : "";
+        const response = await api.get(`/api/search/${queryParam}`);
         const formatted = response.data.map((event) => {
           const start = new Date(`1970-01-01T${event.start_time}Z`);
           const end = new Date(`1970-01-01T${event.end_time}Z`);
+          const dateObj = new Date(event.date);
+
+          const formattedDate = `${
+            dateObj.getMonth() + 1
+          }/${dateObj.getDate()}/${dateObj.getFullYear().toString().slice(-2)}`;
 
           return {
             name: event.title,
-            date: event.date,
+            date: formattedDate,
             time: `${start.toLocaleTimeString([], {
               hour: "numeric",
               minute: "2-digit",
@@ -41,11 +47,13 @@ export default function EventTable() {
         });
 
         setRows(formatted);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Failed to fetch events:", error);
-      });
-  }, []);
+      }
+    };
+
+    fetchData();
+  }, [searchQuery]);
 
   return (
     <TableContainer component={Paper}>

@@ -7,13 +7,12 @@ import {
   InputLabel,
   ButtonGroup,
 } from "@mui/material";
-import { Link } from "react-router";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import SwapVertIcon from "@mui/icons-material/SwapVert";
 import AuthButton from "./AuthButton";
 
-export default function BrowseHeader() {
+export default function BrowseHeader({ input, setInput, onSearchClick }) {
   return (
     <>
       <Box
@@ -27,21 +26,38 @@ export default function BrowseHeader() {
         <AuthButton />
       </Box>
       <Box sx={{ display: "flex", ml: 2, justifyContent: "space-between" }}>
-        <TextField
-          variant="outlined"
-          placeholder="Search events..."
-          size="small"
-          sx={{ width: 450 }}
-          slotProps={{
-            input: {
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            },
-          }}
-        ></TextField>
+        <Box>
+          <TextField
+            variant="outlined"
+            placeholder="Search events..."
+            size="small"
+            sx={{ width: 450 }}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                onSearchClick();
+              }
+            }}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              },
+            }}
+          ></TextField>
+          <Button
+            variant="contained"
+            sx={{ ml: 1, pb: 1 }}
+            onClick={onSearchClick}
+          >
+            Search
+          </Button>
+        </Box>
+
         <ButtonGroup
           variant="outlined"
           sx={{
