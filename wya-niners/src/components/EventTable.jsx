@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import api from "../api";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -10,123 +9,102 @@ import {
   Paper,
   useTheme,
 } from "@mui/material";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 
-export default function EventTable({ searchQuery }) {
+export default function EventTable({ events, searchQuery }) {
   const theme = useTheme();
   const navigate = useNavigate();
   const [rows, setRows] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const queryParam = searchQuery ? `?search=${searchQuery}` : "";
-        const response = await api.get(`/api/search/${queryParam}`);
-        const formatted = response.data.map((event) => {
-          const start = new Date(`1970-01-01T${event.start_time}`);
-          const end = new Date(`1970-01-01T${event.end_time}`);
-          const dateObj = new Date(event.date);
+  const formatEvent = (event) => {
+    // normalize start/end
+    const startISO = event.start_time
+      ? `1970-01-01T${event.start_time}`
+      : event.start;
+    const endISO = event.end_time
+      ? `1970-01-01T${event.end_time}`
+      : event.end;
+    const start = new Date(startISO);
+    const end = new Date(endISO);
 
-          const formattedDate = `${
-            dateObj.getMonth() + 1
-          }/${dateObj.getDate()}/${dateObj.getFullYear().toString().slice(-2)}`;
+    // derive date
+    const dateObj = event.date ? new Date(event.date) : start;
+    const formattedDate = `${dateObj.getMonth() + 1}/${
+      dateObj.getDate()
+    }/${dateObj.getFullYear().toString().slice(-2)}`;
 
-          return {
-            id: event.id,
-            name: event.title,
-            date: formattedDate,
-            time: `${start.toLocaleTimeString([], {
-              hour: "numeric",
-              minute: "2-digit",
-              hour12: true,
-            })} - ${end.toLocaleTimeString([], {
-              hour: "numeric",
-              minute: "2-digit",
-              hour12: true,
-            })}`,
-            building: event.location,
-            organization: event.host_organization,
-          };
-        });
-
-        setRows(formatted);
-      } catch (error) {
-        console.error("Failed to fetch events:", error);
-      }
+    return {
+      id: event.id ?? startISO + endISO,
+      name: event.title ?? event.name ?? "Untitled",
+      date: formattedDate,
+      time: `${start.toLocaleTimeString([], {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      })} – ${end.toLocaleTimeString([], {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      })}`,
+      building: event.location,
+      organization: event.host_organization ?? event.host ?? "",
     };
+  };
 
-    fetchData();
-  }, [searchQuery]);
+  useEffect(() => {
+    if (events) {
+      // use local JSON
+      setRows(events.map(formatEvent));
+    } else {
+      // fallback: fetch from API if you still want searchQuery support
+      (async () => {
+        try {
+          const qp = searchQuery ? `?search=${searchQuery}` : "";
+          const res = await fetch(`/api/search/${qp}`);
+          const data = await res.json();
+          setRows(data.map(formatEvent));
+        } catch (err) {
+          console.error("Failed to fetch events:", err);
+        }
+      })();
+    }
+  }, [events, searchQuery]);
 
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 700 }} aria-label="customized table">
+      <Table sx={{ minWidth: 700 }} aria-label="events table">
         <TableHead>
           <TableRow>
-            <TableCell
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                color: "white",
-                fontWeight: "bold",
-              }}
-            >
-              Events
-            </TableCell>
-            <TableCell
-              align="right"
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                color: "white",
-                fontWeight: "bold",
-              }}
-            >
-              Date
-            </TableCell>
-            <TableCell
-              align="right"
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                color: "white",
-                fontWeight: "bold",
-              }}
-            >
-              Time
-            </TableCell>
-            <TableCell
-              align="right"
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                color: "white",
-                fontWeight: "bold",
-              }}
-            >
-              Building
-            </TableCell>
-            <TableCell
-              align="right"
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                color: "white",
-                fontWeight: "bold",
-              }}
-            >
-              Organization
-            </TableCell>
+            {["Event", "Date", "Time", "Building", "Organization"].map(
+              (h, i) => (
+                <TableCell
+                  key={i}
+                  align={i === 0 ? "left" : "right"}
+                  sx={{
+                    backgroundColor: theme.palette.primary.main,
+                    color: "white",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {h}
+                </TableCell>
+              )
+            )}
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row, index) => (
+          {rows.map((r) => (
             <TableRow
-              key={index}
+              key={r.id}
               hover
               sx={{ cursor: "pointer" }}
-              onClick={() => navigate(`/events/${row.id}`)}
+              onClick={() => navigate(`/events/${r.id}`)}
             >
-              <TableCell sx={{ fontWeight: "bold" }}>{row.name}</TableCell>
-              <TableCell align="right">{row.date}</TableCell>
-              <TableCell align="right">{row.time}</TableCell>
-              <TableCell align="right">{row.building}</TableCell>
-              <TableCell align="right">{row.organization}</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>{r.name}</TableCell>
+              <TableCell align="right">{r.date}</TableCell>
+              <TableCell align="right">{r.time}</TableCell>
+              <TableCell align="right">{r.building}</TableCell>
+              <TableCell align="right">{r.organization}</TableCell>
             </TableRow>
           ))}
         </TableBody>
