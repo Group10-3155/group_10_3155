@@ -3,7 +3,7 @@ import Sidebar from "../components/Sidebar.jsx";
 import BrowseHeader from "../components/BrowseHeader.jsx";
 import EventTable from "../components/EventTable.jsx";
 import { useEffect, useState } from "react";
-
+import events from "../data/events.json";
 export default function Browse() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchInput, setSearchInput] = useState("");
@@ -22,7 +22,7 @@ export default function Browse() {
           onSearchClick={handleSearch}
         />
         <Box sx={{ flexGrow: 1, m: 2 }}>
-          <EventTable searchQuery={searchQuery} />
+          <EventTable searchQuery={searchQuery} events={events} />
         </Box>
       </Box>
     </Box>
