@@ -38,7 +38,7 @@ export default function Event() {
                 {event.event_photo && (
                   <Box
                     component="img"
-                    src={event.event_photo} 
+                    src={event.event_photo_url}
                     alt="Event"
                     sx={{
                       width: "100%",
@@ -49,7 +49,14 @@ export default function Event() {
                 )}
               </Box>
 
-              <Box sx={{ flex: 1, display: "flex", flexDirection: "column", pr:2 }}>
+              <Box
+                sx={{
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  pr: 2,
+                }}
+              >
                 <Typography variant="h2">{event.title}</Typography>
                 <Typography sx={{ mb: 2 }} variant="h5">
                   Hosted by: {event.host_organization}
