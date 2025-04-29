@@ -5,6 +5,7 @@ from rest_framework.filters import SearchFilter
 from .serializers import UserSerializer, EventSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Event
+from django.shortcuts import get_object_or_404
 
 # View for all events
 class AllEventsView(generics.ListCreateAPIView):
@@ -20,9 +21,19 @@ class AllEventsView(generics.ListCreateAPIView):
 
 # View singular events
 class SingularEventView(generics.RetrieveAPIView):
-	queryset = Event.objects.all()
+	# queryset = Event.objects.all()
 	serializer_class = EventSerializer
 	permission_classes = [AllowAny]
+
+	def get_object(self):
+		lookup_id = self.kwargs["pk"]
+
+        # Try external_id first
+		try:
+			return Event.objects.get(external_id=lookup_id)
+		except Event.DoesNotExist:
+            # Fallback to primary key id
+			return get_object_or_404(Event, id=lookup_id)
 
 # View user events only
 class MyEventsView(generics.ListCreateAPIView):

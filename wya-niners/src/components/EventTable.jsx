@@ -10,6 +10,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import api from "../api";
 
 export default function EventTable({ events, searchQuery }) {
   const theme = useTheme();
@@ -17,24 +18,23 @@ export default function EventTable({ events, searchQuery }) {
   const [rows, setRows] = useState([]);
 
   const formatEvent = (event) => {
-    // normalize start/end
     const startISO = event.start_time
       ? `1970-01-01T${event.start_time}`
       : event.start;
-    const endISO = event.end_time
-      ? `1970-01-01T${event.end_time}`
-      : event.end;
+    const endISO = event.end_time ? `1970-01-01T${event.end_time}` : event.end;
     const start = new Date(startISO);
     const end = new Date(endISO);
 
-    // derive date
     const dateObj = event.date ? new Date(event.date) : start;
-    const formattedDate = `${dateObj.getMonth() + 1}/${
-      dateObj.getDate()
-    }/${dateObj.getFullYear().toString().slice(-2)}`;
+    const formattedDate = `${
+      dateObj.getMonth() + 1
+    }/${dateObj.getDate()}/${dateObj.getFullYear().toString().slice(-2)}`;
+
+    // Extract event ID from URL
+    const eventIdFromUrl = event.url ? event.url.split("/").pop() : null;
 
     return {
-      id: event.id ?? startISO + endISO,
+      id: eventIdFromUrl ?? event.id ?? `${startISO}-${endISO}`, // Prefer the ID from URL
       name: event.title ?? event.name ?? "Untitled",
       date: formattedDate,
       time: `${start.toLocaleTimeString([], {
@@ -52,23 +52,23 @@ export default function EventTable({ events, searchQuery }) {
   };
 
   useEffect(() => {
-    if (events) {
-      // use local JSON
-      setRows(events.map(formatEvent));
-    } else {
-      // fallback: fetch from API if you still want searchQuery support
-      (async () => {
-        try {
-          const qp = searchQuery ? `?search=${searchQuery}` : "";
-          const res = await fetch(`/api/search/${qp}`);
-          const data = await res.json();
-          setRows(data.map(formatEvent));
-        } catch (err) {
-          console.error("Failed to fetch events:", err);
-        }
-      })();
-    }
-  }, [events, searchQuery]);
+    const fetchAndCombineEvents = async () => {
+      try {
+        const qp = searchQuery ? `?search=${searchQuery}` : "";
+        const res = await api.get(`/api/search/${qp}`);
+        const backendEvents = res.data;
+
+        // Combine backend + local JSON events
+        const allEvents = [...backendEvents, ...(events || [])];
+        setRows(allEvents.map(formatEvent));
+      } catch (err) {
+        console.error("Failed to fetch events:", err);
+        setRows((events || []).map(formatEvent)); // fallback to local JSON only
+      }
+    };
+
+    fetchAndCombineEvents();
+  }, [searchQuery]);
 
   return (
     <TableContainer component={Paper}>
@@ -100,11 +100,21 @@ export default function EventTable({ events, searchQuery }) {
               sx={{ cursor: "pointer" }}
               onClick={() => navigate(`/events/${r.id}`)}
             >
-              <TableCell sx={{ fontWeight: "bold" }}>{r.name}</TableCell>
-              <TableCell align="right">{r.date}</TableCell>
-              <TableCell align="right">{r.time}</TableCell>
-              <TableCell align="right">{r.building}</TableCell>
-              <TableCell align="right">{r.organization}</TableCell>
+              <TableCell sx={{ fontWeight: "bold", width: "15%" }}>
+                {r.name}
+              </TableCell>
+              <TableCell align="right" sx={{ width: "10%" }}>
+                {r.date}
+              </TableCell>
+              <TableCell align="right" sx={{ width: "20%" }}>
+                {r.time}
+              </TableCell>
+              <TableCell align="right" sx={{ width: "25%" }}>
+                {r.building}
+              </TableCell>
+              <TableCell align="right" sx={{ width: "30%" }}>
+                {r.organization}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

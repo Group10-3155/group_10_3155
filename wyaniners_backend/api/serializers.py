@@ -13,7 +13,15 @@ class UserSerializer(serializers.ModelSerializer):
 		return user	
 	
 class EventSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = Event
-		fields = "__all__"
-		extra_kwargs = {"author": {"read_only": True}}
+    event_photo_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Event
+        fields = "__all__"
+        extra_kwargs = {"author": {"read_only": True}}
+
+    def get_event_photo_url(self, obj):
+        request = self.context.get('request')
+        if obj.event_photo:
+            return request.build_absolute_uri(obj.event_photo.url)
+        return None
