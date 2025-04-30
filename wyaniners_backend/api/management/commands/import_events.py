@@ -25,6 +25,10 @@ class Command(BaseCommand):
 
                 external_id = e["url"].split("/")[-1] if "url" in e else None
 
+                if external_id and Event.objects.filter(external_id=external_id).exists():
+                    self.stdout.write(self.style.WARNING(f"Skipped duplicate: {e.get('name')}"))
+                    continue
+
                 # Build event data dynamically
                 event_data = {
                     "external_id": external_id,
