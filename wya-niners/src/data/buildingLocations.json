@@ -2,8 +2,8 @@
     "buildings": [
       {
         "name": "Cameron Hall",
-        "latitude": 35.30769169816971, 
-        "longitude": -80.7312829759559
+        "latitude": 35.3076783, 
+        "longitude": -80.7312073
       },
       {
         "name": "Cone University Center",
@@ -22,8 +22,8 @@
       },
       {
         "name": "Burson Hall",
-        "latitude": 35.30760634816651, 
-        "longitude": -80.73193302027849
+        "latitude": 35.3074549, 
+        "longitude": -80.7324629 
       },
       {
         "name": "Fretwell Building",
@@ -31,19 +31,14 @@
         "longitude": -80.72830851644989
       },
       {
-        "name": "College of Education",
-        "latitude": 35.30926290833886,
-        "longitude": -80.73391805831974
-      },
-      {
         "name": "Cato College of Education",
-        "latitude": 35.30813904107538,
-        "longitude":  -80.73149358650961
+        "latitude": 35.3054579,
+        "longitude":  -80.7287281
       },
       {
         "name": "Student Union",
-        "latitude": 35.30871920175642, 
-        "longitude": -80.73317960493391
+        "latitude": 35.3086204, 
+        "longitude": -80.7337385
       },
       {
         "name": "Student Activity Center (SAC)",

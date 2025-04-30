@@ -5,8 +5,6 @@ import Home from "./pages/Home.jsx";
 import Notification from "./pages/Notification.jsx";
 import Login from "./pages/Login.jsx";
 import ProtectedRoute from "./components/ProtectedRoutes.jsx";
-import EventTable from "./components/EventTable.jsx";
-import events from "./data/events.json";
 import {
   createBrowserRouter,
   Navigate,
