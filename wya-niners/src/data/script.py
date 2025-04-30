@@ -94,7 +94,7 @@ def get_ics_data(
     return event_list
 
 
-def jsonify_events(event_list, file_path="./src/data/events.json"):
+def jsonify_events(event_list, file_path="./events.json"):
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
     event_dicts = [event.to_dict() for event in event_list]
     json_string = json.dumps(event_dicts)
@@ -103,7 +103,7 @@ def jsonify_events(event_list, file_path="./src/data/events.json"):
         file.write(beautified)
 
 
-def make_events(file_path="./src/data/events.json", only_with_geo=False):
+def make_events(file_path="./events.json", only_with_geo=False):
     event_list = get_ics_data(print_num_events=True, only_with_geo=only_with_geo)
     jsonify_events(event_list, file_path)
 
