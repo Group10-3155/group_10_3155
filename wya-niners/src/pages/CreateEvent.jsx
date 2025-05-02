@@ -50,7 +50,7 @@ export default function CreateEvent() {
       const formData = new FormData();
       formData.append("title", eventName);
       formData.append("host_organization", host);
-      formData.append("date", date?.format("YYYY-MM-DD"));
+      formData.append("date", date?.toDate().toISOString().split("T")[0]);
       formData.append("start_time", startTime?.format("HH:mm:ss"));
       formData.append("end_time", endTime?.format("HH:mm:ss"));
       formData.append("location", location);

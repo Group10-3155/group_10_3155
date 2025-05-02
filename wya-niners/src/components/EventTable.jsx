@@ -12,7 +12,12 @@ import {
 import { useNavigate } from "react-router-dom";
 import api from "../api";
 
-export default function EventTable({ events, searchQuery }) {
+export default function EventTable({
+  events,
+  searchQuery,
+  dateFilter,
+  sortOrder,
+}) {
   const theme = useTheme();
   const navigate = useNavigate();
   const [rows, setRows] = useState([]);
@@ -25,16 +30,17 @@ export default function EventTable({ events, searchQuery }) {
     const start = new Date(startISO);
     const end = new Date(endISO);
 
-    const dateObj = event.date ? new Date(event.date) : start;
+    const dateObj = event.date
+      ? new Date(event.date + "T12:00:00") // force noon local time
+      : start;
     const formattedDate = `${
       dateObj.getMonth() + 1
     }/${dateObj.getDate()}/${dateObj.getFullYear().toString().slice(-2)}`;
 
-    // Extract event ID from URL
     const eventIdFromUrl = event.url ? event.url.split("/").pop() : null;
 
     return {
-      id: eventIdFromUrl ?? event.id ?? `${startISO}-${endISO}`, // Prefer the ID from URL
+      id: eventIdFromUrl ?? event.id ?? `${startISO}-${endISO}`,
       name: event.title ?? event.name ?? "Untitled",
       date: formattedDate,
       time: `${start.toLocaleTimeString([], {
@@ -57,18 +63,46 @@ export default function EventTable({ events, searchQuery }) {
         const qp = searchQuery ? `?search=${searchQuery}` : "";
         const res = await api.get(`/api/search/${qp}`);
         const backendEvents = res.data;
-
-        // Combine backend + local JSON events
         const allEvents = [...backendEvents, ...(events || [])];
         setRows(allEvents.map(formatEvent));
       } catch (err) {
         console.error("Failed to fetch events:", err);
-        setRows((events || []).map(formatEvent)); // fallback to local JSON only
+        setRows((events || []).map(formatEvent));
       }
     };
 
     fetchAndCombineEvents();
-  }, [searchQuery]);
+  }, [searchQuery, events]);
+
+  const filterRowsByDate = (rows) => {
+    if (dateFilter === "all") return rows;
+
+    const now = new Date();
+    return rows.filter((r) => {
+      const [month, day, year] = r.date.split("/").map(Number);
+      const eventDate = new Date(`20${year}`, month - 1, day);
+      if (dateFilter === "today") {
+        return eventDate.toDateString() === now.toDateString();
+      }
+      if (dateFilter === "thisWeek") {
+        const oneWeekFromNow = new Date();
+        oneWeekFromNow.setDate(now.getDate() + 7);
+        return eventDate >= now && eventDate <= oneWeekFromNow;
+      }
+      return true;
+    });
+  };
+
+  const sortRows = (rows) => {
+    return [...rows].sort((a, b) => {
+      const dateA = new Date(a.date + " " + a.time.split("–")[0]);
+      const dateB = new Date(b.date + " " + b.time.split("–")[0]);
+
+      return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+    });
+  };
+
+  const filteredRows = sortRows(filterRowsByDate(rows));
 
   return (
     <TableContainer component={Paper}>
@@ -93,7 +127,7 @@ export default function EventTable({ events, searchQuery }) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((r) => (
+          {filteredRows.map((r) => (
             <TableRow
               key={r.id}
               hover
