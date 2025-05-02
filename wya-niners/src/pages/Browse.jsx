@@ -7,6 +7,8 @@ import events from "../data/events.json";
 export default function Browse() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchInput, setSearchInput] = useState("");
+  const [dateFilter, setDateFilter] = useState("all");
+  const [sortOrder, setSortOrder] = useState("desc");
 
   const handleSearch = () => {
     setSearchQuery(searchInput);
@@ -20,9 +22,18 @@ export default function Browse() {
           input={searchInput}
           setInput={setSearchInput}
           onSearchClick={handleSearch}
+          dateFilter={dateFilter}
+          setDateFilter={setDateFilter}
+          sortOrder={sortOrder}
+          setSortOrder={setSortOrder}
         />
         <Box sx={{ flexGrow: 1, m: 2 }}>
-          <EventTable searchQuery={searchQuery} events={events} />
+          <EventTable
+            searchQuery={searchQuery}
+            events={events}
+            dateFilter={dateFilter}
+            sortOrder={sortOrder}
+          />
         </Box>
       </Box>
     </Box>

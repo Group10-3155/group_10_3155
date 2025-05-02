@@ -66,12 +66,15 @@ export default function Event() {
                 </Typography>
                 <Typography variant="h6">
                   <EventIcon />{" "}
-                  {new Date(event.date).toLocaleDateString("en-US", {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
+                  {new Date(event.date + "T12:00:00").toLocaleDateString(
+                    "en-US",
+                    {
+                      weekday: "long",
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    }
+                  )}
                 </Typography>
                 <Typography variant="h6">
                   <AccessTimeIcon />{" "}
