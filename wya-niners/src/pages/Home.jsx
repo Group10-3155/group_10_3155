@@ -1,15 +1,29 @@
+// src/pages/Home.jsx
 import { Box } from "@mui/material";
+import { useState } from "react";
 import Header from "../components/Header.jsx";
 import Sidebar from "../components/Sidebar.jsx";
-import MapComponent from '../components/MapComponent.jsx';
+import MapComponent from "../components/MapComponent.jsx";
+import events from "../data/events.json";
+
 export default function Home() {
+  const [selectedEvent, setSelectedEvent] = useState(null);
+
   return (
     <Box sx={{ display: "flex", height: "100vh" }}>
-      <Sidebar />
+      <Sidebar 
+        events={events} 
+        onEventSelect={setSelectedEvent} 
+      />
+
       <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
         <Header />
         <Box sx={{ flexGrow: 1 }}>
-          <MapComponent />
+          <MapComponent
+            events={events}
+            selectedEvent={selectedEvent}
+            setSelectedEvent={setSelectedEvent}
+          />
         </Box>
       </Box>
     </Box>

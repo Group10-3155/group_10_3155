@@ -1,40 +1,38 @@
+// src/components/Sidebar.jsx
+import React from "react";
 import {
   Drawer,
   List,
   ListItem,
-  ListItemText,
   ListItemIcon,
+  ListItemText,
   Typography,
   useTheme,
-  Button,
   Box,
+  Button,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import SearchIcon from "@mui/icons-material/Search";
-import WhatshotIcon from "@mui/icons-material/Whatshot";
-import { Link, useLocation } from "react-router-dom";
+import EventIcon from "@mui/icons-material/Event";
+import { Link as RouterLink } from "react-router-dom";
 
 const drawerWidth = 240;
 
-const discoverButtonList = [
+// include the link paths here
+const discoverItems = [
   { text: "Home", icon: <HomeIcon />, link: "/" },
   { text: "Browse", icon: <SearchIcon />, link: "/browse" },
 ];
 
-// add dynamic updating
-const trendingButtonList = [
-  { text: "Event 1", icon: <WhatshotIcon />, eventId: "1" },
-  { text: "Event 2", icon: <WhatshotIcon />, eventId: "2" },
-  { text: "Event 3", icon: <WhatshotIcon />, eventId: "3" },
-];
-
-export default function Sidebar() {
+export default function Sidebar({ events = [], onEventSelect }) {
   const theme = useTheme();
-  const location = useLocation();
 
-  // Hide Add Event Button in certain pages
-  const pagesNoEventButton = ["/create-event"];
-  const hideEventButton = !pagesNoEventButton.includes(location.pathname);
+  // pick first 5 as “trending”
+  const trending = events.slice(0, 5).map(evt => ({
+    ...evt,
+    text: evt.name || evt.title || "Untitled",
+    icon: <EventIcon />,
+  }));
 
   return (
     <Drawer
@@ -42,62 +40,46 @@ export default function Sidebar() {
       sx={{
         width: drawerWidth,
         flexShrink: 0,
-        [`& .MuiDrawer-paper`]: {
+        "& .MuiDrawer-paper": {
           width: drawerWidth,
           boxSizing: "border-box",
-          paddingTop: 2,
+          pt: 2,
         },
       }}
     >
       <Box
         sx={{
-          height: "100%",
           display: "flex",
           flexDirection: "column",
+          height: "100%",
           justifyContent: "space-between",
         }}
       >
         <Box>
-          <Link to="/" style={{ textDecoration: "none" }}>
-            <Typography
-              variant="h4"
-              sx={{
-                textAlign: "center",
-                fontWeight: "bold",
-                mb: 1,
-                mt: 1,
-                color: theme.palette.primary.main,
-              }}
-            >
-              WYANiners
-            </Typography>
-          </Link>
+          <Typography
+            variant="h4"
+            align="center"
+            fontWeight="bold"
+            color={theme.palette.primary.main}
+            gutterBottom
+          >
+            WYANiners
+          </Typography>
 
           <Typography sx={{ px: 2, pt: 2, fontWeight: "bold" }}>
             Discover
           </Typography>
           <List>
-            {discoverButtonList.map(({ text, icon, link }) => (
-              <Link
+            {discoverItems.map(({ text, icon, link }) => (
+              <ListItem
+                button
+                key={text}
+                component={RouterLink}
                 to={link}
-                style={{
-                  textDecoration: "none",
-                  width: "100%",
-                  color: "black",
-                }}
               >
-                <ListItem button key={text}>
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 32,
-                      mr: 1,
-                    }}
-                  >
-                    {icon}
-                  </ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItem>
-              </Link>
+                <ListItemIcon>{icon}</ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItem>
             ))}
           </List>
 
@@ -105,43 +87,37 @@ export default function Sidebar() {
             Trending Events
           </Typography>
           <List>
-            {/* Temporary Trending Events */}
-            {trendingButtonList.map(({ text, icon, eventId }) => (
-              <Link
-                to={`/events/${eventId}`}
-                style={{
-                  textDecoration: "none",
-                  width: "100%",
-                  color: "black",
-                }}
-              >
-                <ListItem button key={text}>
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 32,
-                      mr: 1,
-                    }}
-                  >
-                    {icon}
-                  </ListItemIcon>
-                  <ListItemText primary={text} />
+            {trending.length > 0 ? (
+              trending.map(evt => (
+                <ListItem
+                  button
+                  key={evt.id ?? evt._id}
+                  onClick={() => onEventSelect(evt)}
+                >
+                  <ListItemIcon>{evt.icon}</ListItemIcon>
+                  <ListItemText primary={evt.text} noWrap />
                 </ListItem>
-              </Link>
-            ))}
+              ))
+            ) : (
+              <Typography
+                sx={{ px: 2, py: 1, fontSize: "0.875rem", color: "text.secondary" }}
+              >
+                No events to show
+              </Typography>
+            )}
           </List>
         </Box>
-        <Link to="/create-event" style={{ textDecoration: "none" }}>
-          {hideEventButton && (
-            <Box sx={{ pb: 4, display: "flex", justifyContent: "center" }}>
-              <Button
-                variant="contained"
-                sx={{ height: 50, width: "75%", fontSize: "1.1em" }}
-              >
-                Add Event
-              </Button>
-            </Box>
-          )}
-        </Link>
+
+        <Box sx={{ pb: 4, textAlign: "center" }}>
+          <Button
+            variant="contained"
+            component={RouterLink}
+            to="/create-event"
+            sx={{ width: "75%", height: 50, fontSize: "1.1em" }}
+          >
+            Add Event
+          </Button>
+        </Box>
       </Box>
     </Drawer>
   );
