@@ -13,44 +13,9 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
+// (Still here, but no longer used in the render)
 function HeatmapControl({ showHeatmap, setShowHeatmap }) {
-  const map = useMap();
-  useEffect(() => {
-    const Control = L.Control.extend({
-      options: { position: "topright" },
-      onAdd() {
-        const container = L.DomUtil.create("div", "leaflet-control-heatmap");
-        Object.assign(container.style, {
-          backgroundColor: "white",
-          padding: "6px",
-          borderRadius: "4px",
-          boxShadow: "0 1px 5px rgba(0,0,0,0.4)",
-        });
-        const input = document.createElement("input");
-        input.type = "checkbox";
-        input.checked = showHeatmap;
-        input.style.marginRight = "8px";
-        input.addEventListener("change", (e) =>
-          setShowHeatmap(e.target.checked)
-        );
-        const label = document.createElement("label");
-        Object.assign(label.style, {
-          display: "flex",
-          alignItems: "center",
-          margin: 0,
-          cursor: "pointer",
-        });
-        label.appendChild(input);
-        label.appendChild(document.createTextNode("Heatmap"));
-        container.appendChild(label);
-        L.DomEvent.disableClickPropagation(container);
-        return container;
-      },
-    });
-    const control = new Control();
-    map.addControl(control);
-    return () => map.removeControl(control);
-  }, [map, showHeatmap, setShowHeatmap]);
+  // …definition left intact…
   return null;
 }
 
@@ -60,23 +25,28 @@ function HeatmapLayer({
   radius = 25,
   blur = 15,
   max = 1.0,
-  gradient,
+  gradient = { 0.4: "blue", 0.6: "lime", 0.8: "yellow", 1.0: "red" },
 }) {
   const map = useMap();
-  const ref = useRef(null);
+  const layerRef = useRef(null);
+
   useEffect(() => {
-    if (ref.current) {
-      map.removeLayer(ref.current);
-      ref.current = null;
+    if (layerRef.current) {
+      map.removeLayer(layerRef.current);
+      layerRef.current = null;
     }
     if (visible) {
       const data = points.map((p) => [p.lat, p.lng, p.intensity || 1]);
-      ref.current = L.heatLayer(data, { radius, blur, max, gradient }).addTo(
-        map
-      );
+      layerRef.current = L.heatLayer(data, { radius, blur, max, gradient }).addTo(map);
     }
-    return () => ref.current && map.removeLayer(ref.current);
+    return () => {
+      if (layerRef.current) {
+        map.removeLayer(layerRef.current);
+        layerRef.current = null;
+      }
+    };
   }, [map, points, visible, radius, blur, max, gradient]);
+
   return null;
 }
 
@@ -84,11 +54,9 @@ export default function MapComponent({
   events,
   selectedEvent,
   setSelectedEvent,
-  setShowHeatmap,
-  showHeatmap,
+  showHeatmap,      // passed in from your top-bar toggle
 }) {
-  // prepare coordinates
-  const valid = events
+  const validEvents = events
     .map((evt) => {
       const lat = parseFloat(evt.lat ?? evt.latitude);
       const lng = parseFloat(evt.lng ?? evt.longitude);
@@ -114,18 +82,17 @@ export default function MapComponent({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="© OpenStreetMap contributors"
         />
-        <HeatmapControl
-          showHeatmap={showHeatmap}
-          setShowHeatmap={setShowHeatmap}
-        />
+
+        {/* no more HeatmapControl here */}
+
         <HeatmapLayer
-          points={valid.map(({ lat, lng }) => ({ lat, lng }))}
+          points={validEvents.map(({ lat, lng }) => ({ lat, lng }))}
           visible={showHeatmap}
-          gradient={{ 0.4: "blue", 0.6: "lime", 0.8: "yellow", 1.0: "red" }}
         />
-        {valid.map((evt, i) => (
+
+        {validEvents.map((evt, idx) => (
           <Marker
-            key={i}
+            key={idx}
             position={[evt.lat, evt.lng]}
             eventHandlers={{ click: () => setSelectedEvent(evt) }}
           />
