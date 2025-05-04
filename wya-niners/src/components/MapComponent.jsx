@@ -30,7 +30,9 @@ function HeatmapControl({ showHeatmap, setShowHeatmap }) {
         input.type = "checkbox";
         input.checked = showHeatmap;
         input.style.marginRight = "8px";
-        input.addEventListener("change", e => setShowHeatmap(e.target.checked));
+        input.addEventListener("change", (e) =>
+          setShowHeatmap(e.target.checked)
+        );
         const label = document.createElement("label");
         Object.assign(label.style, {
           display: "flex",
@@ -52,7 +54,14 @@ function HeatmapControl({ showHeatmap, setShowHeatmap }) {
   return null;
 }
 
-function HeatmapLayer({ points, visible, radius = 25, blur = 15, max = 1.0, gradient }) {
+function HeatmapLayer({
+  points,
+  visible,
+  radius = 25,
+  blur = 15,
+  max = 1.0,
+  gradient,
+}) {
   const map = useMap();
   const ref = useRef(null);
   useEffect(() => {
@@ -61,18 +70,26 @@ function HeatmapLayer({ points, visible, radius = 25, blur = 15, max = 1.0, grad
       ref.current = null;
     }
     if (visible) {
-      const data = points.map(p => [p.lat, p.lng, p.intensity || 1]);
-      ref.current = L.heatLayer(data, { radius, blur, max, gradient }).addTo(map);
+      const data = points.map((p) => [p.lat, p.lng, p.intensity || 1]);
+      ref.current = L.heatLayer(data, { radius, blur, max, gradient }).addTo(
+        map
+      );
     }
     return () => ref.current && map.removeLayer(ref.current);
   }, [map, points, visible, radius, blur, max, gradient]);
   return null;
 }
 
-export default function MapComponent({ events, selectedEvent, setSelectedEvent }) {
+export default function MapComponent({
+  events,
+  selectedEvent,
+  setSelectedEvent,
+  setShowHeatmap,
+  showHeatmap,
+}) {
   // prepare coordinates
   const valid = events
-    .map(evt => {
+    .map((evt) => {
       const lat = parseFloat(evt.lat ?? evt.latitude);
       const lng = parseFloat(evt.lng ?? evt.longitude);
       return isNaN(lat) || isNaN(lng) ? null : { ...evt, lat, lng };
@@ -82,7 +99,7 @@ export default function MapComponent({ events, selectedEvent, setSelectedEvent }
   return (
     <>
       <MapContainer
-        center={[35.308767, -80.733780]}
+        center={[35.308767, -80.73378]}
         zoom={17}
         style={{ height: "100%", width: "100%" }}
         maxBounds={[
@@ -98,12 +115,12 @@ export default function MapComponent({ events, selectedEvent, setSelectedEvent }
           attribution="© OpenStreetMap contributors"
         />
         <HeatmapControl
-          showHeatmap={true}
-          setShowHeatmap={() => {}}
+          showHeatmap={showHeatmap}
+          setShowHeatmap={setShowHeatmap}
         />
         <HeatmapLayer
           points={valid.map(({ lat, lng }) => ({ lat, lng }))}
-          visible={true}
+          visible={showHeatmap}
           gradient={{ 0.4: "blue", 0.6: "lime", 0.8: "yellow", 1.0: "red" }}
         />
         {valid.map((evt, i) => (

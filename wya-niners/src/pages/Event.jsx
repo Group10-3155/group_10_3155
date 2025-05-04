@@ -7,6 +7,7 @@ import api from "../api";
 import EventIcon from "@mui/icons-material/Event";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import LocationPinIcon from "@mui/icons-material/LocationPin";
+import events from "../data/events.json";
 
 export default function Event() {
   const { eventId } = useParams();
@@ -28,7 +29,7 @@ export default function Event() {
 
   return (
     <Box sx={{ display: "flex", height: "100vh" }}>
-      <Sidebar />
+      <Sidebar events={events} />
       <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
         <Header />
         {event ? (
