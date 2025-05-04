@@ -13,8 +13,8 @@ import {
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import SearchIcon from "@mui/icons-material/Search";
-import EventIcon from "@mui/icons-material/Event";
-import { Link as RouterLink } from "react-router-dom";
+import WhatshotIcon from "@mui/icons-material/Whatshot";
+import { Link, Link as RouterLink } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -28,10 +28,10 @@ export default function Sidebar({ events = [], onEventSelect }) {
   const theme = useTheme();
 
   // pick first 5 as “trending”
-  const trending = events.slice(0, 5).map(evt => ({
+  const trending = events.slice(0, 5).map((evt) => ({
     ...evt,
     text: evt.name || evt.title || "Untitled",
-    icon: <EventIcon />,
+    icon: <WhatshotIcon />,
   }));
 
   return (
@@ -56,43 +56,52 @@ export default function Sidebar({ events = [], onEventSelect }) {
         }}
       >
         <Box>
-          <Typography
-            variant="h4"
-            align="center"
-            fontWeight="bold"
-            color={theme.palette.primary.main}
-            gutterBottom
-          >
-            WYANiners
-          </Typography>
+          <Link to="/" style={{ textDecoration: "none" }}>
+            <Typography
+              variant="h4"
+              align="center"
+              fontWeight="bold"
+              gutterBottom
+            >
+              <Box component="span" sx={{ color: theme.palette.primary.main }}>
+                WYA
+              </Box>
+              <Box
+                component="span"
+                sx={{ color: theme.palette.secondary.main }}
+              >
+                Niners
+              </Box>
+            </Typography>
+          </Link>
 
-          <Typography sx={{ px: 2, pt: 2, fontWeight: "bold" }}>
+          <Typography variant="h5" sx={{ px: 2, pt: 1, fontWeight: "bold" }}>
             Discover
           </Typography>
           <List>
             {discoverItems.map(({ text, icon, link }) => (
-              <ListItem
-                button
-                key={text}
-                component={RouterLink}
-                to={link}
-              >
+              <ListItem button key={text} component={RouterLink} to={link}>
                 <ListItemIcon>{icon}</ListItemIcon>
-                <ListItemText primary={text} />
+                <ListItemText primary={text} sx={{ color: "black" }} />
               </ListItem>
             ))}
           </List>
 
-          <Typography sx={{ px: 2, pt: 2, fontWeight: "bold" }}>
+          <Typography variant="h5" sx={{ px: 2, pt: 1, fontWeight: "bold" }}>
             Trending Events
           </Typography>
           <List>
             {trending.length > 0 ? (
-              trending.map(evt => (
+              trending.map((evt) => (
                 <ListItem
                   button
                   key={evt.id ?? evt._id}
                   onClick={() => onEventSelect(evt)}
+                  sx={{
+                    "&:hover": {
+                      cursor: "pointer",
+                    },
+                  }}
                 >
                   <ListItemIcon>{evt.icon}</ListItemIcon>
                   <ListItemText primary={evt.text} noWrap />
@@ -100,7 +109,12 @@ export default function Sidebar({ events = [], onEventSelect }) {
               ))
             ) : (
               <Typography
-                sx={{ px: 2, py: 1, fontSize: "0.875rem", color: "text.secondary" }}
+                sx={{
+                  px: 2,
+                  py: 1,
+                  fontSize: "0.875rem",
+                  color: "text.secondary",
+                }}
               >
                 No events to show
               </Typography>

@@ -2,7 +2,7 @@ import { Box, ButtonGroup, Button } from "@mui/material";
 import { Link, useLocation } from "react-router";
 import AuthButton from "./AuthButton";
 
-export default function Header() {
+export default function Header({ setShowHeatMap }) {
   return (
     <Box
       sx={{
@@ -13,13 +13,13 @@ export default function Header() {
     >
       <ButtonGroup variant="contained" aria-label="Basic button group">
         <Link to="/">
-          <Button>Map</Button>
+          <Button onClick={() => setShowHeatMap(false)}>Map</Button>
         </Link>
         <Link to="/">
-          <Button>Trending</Button>
+          <Button onClick={() => setShowHeatMap(true)}>Heatmap</Button>
         </Link>
         <Link to="/notifications">
-          <Button>Notifications</Button>
+          <Button>My Events</Button>
         </Link>
       </ButtonGroup>
       <AuthButton />

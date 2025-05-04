@@ -16,7 +16,7 @@ export default function Browse() {
 
   return (
     <Box sx={{ display: "flex", height: "100vh" }}>
-      <Sidebar />
+      <Sidebar events={events} />
       <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
         <BrowseHeader
           input={searchInput}
