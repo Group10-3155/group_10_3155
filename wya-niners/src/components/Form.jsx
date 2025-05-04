@@ -1,3 +1,4 @@
+// src/components/Form.jsx
 import { useState } from "react";
 import api from "../api";
 import { Link, useNavigate } from "react-router-dom";
@@ -21,9 +22,8 @@ export default function Form({ route, method }) {
   const name = method === "login" ? "Login" : "Sign Up";
 
   const handleSubmit = async (e) => {
-    setLoading(true);
     e.preventDefault();
-
+    setLoading(true);
     try {
       const res = await api.post(route, { username, password });
       if (method === "login") {
@@ -43,23 +43,31 @@ export default function Form({ route, method }) {
   return (
     <Box
       sx={{
+        position: "relative",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
         minHeight: "100vh",
+        p: 2,
       }}
     >
+      {/* Back to Home button in top-left corner, smaller size */}
+      <Box sx={{ position: "absolute", top: 16, left: 16 }}>
+        <Button
+          component={Link}
+          to="/"
+          variant="contained"
+          size="small"
+        >
+          Back to Home
+        </Button>
+      </Box>
+
       <Card sx={{ width: 350, p: 2 }}>
         <CardContent>
           <form onSubmit={handleSubmit}>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 2,
-              }}
-            >
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
               <Typography variant="h4">{name}</Typography>
               <TextField
                 label="Username"
@@ -77,30 +85,21 @@ export default function Form({ route, method }) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  mt: -1,
-                }}
-              >
+              <Box sx={{ display: "flex", justifyContent: "center", mt: -1 }}>
                 {loading && <CircularProgress />}
               </Box>
-              <Button type="submit" variant="contained">
+              <Button fullWidth type="submit" variant="contained">
                 {name}
               </Button>
             </Box>
           </form>
+
           <Box
             sx={{
               display: "flex",
               flexDirection: "column",
-              justifyContent: "center",
               alignItems: "center",
               mt: 2,
-              mb: -2,
             }}
           >
             {method === "login" ? (
