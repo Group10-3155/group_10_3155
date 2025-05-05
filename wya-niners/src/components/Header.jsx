@@ -18,9 +18,9 @@ export default function Header({ setShowHeatMap }) {
         <Link to="/">
           <Button onClick={() => setShowHeatMap(true)}>Heatmap</Button>
         </Link>
-        <Link to="/notifications">
+        {/* <Link to="/notifications">
           <Button>My Events</Button>
-        </Link>
+        </Link> */}
       </ButtonGroup>
       <AuthButton />
     </Box>

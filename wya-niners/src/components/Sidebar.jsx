@@ -28,7 +28,7 @@ export default function Sidebar({ events = [], onEventSelect }) {
   const theme = useTheme();
 
   // pick first 5 as “trending”
-  const trending = events.slice(0, 4).map((evt) => ({
+  const trending = events.slice(0, 5).map((evt) => ({
     ...evt,
     text: evt.name || evt.title || "Untitled",
     icon: <WhatshotIcon />,
