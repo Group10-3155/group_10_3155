@@ -29,3 +29,10 @@
   7. Start the development server:
 
     python manage.py runserver
+
+# Additional Notes
+Both the backend and frontend localhost servers must be running simultaneously to view live data on the site
+
+    npm run dev
+
+    python manage.py runserver
